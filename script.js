@@ -1,30 +1,27 @@
+jQuery.expr[':'].Contains = function(a,i,m){
+    return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase())>=0;
+};
+
 $(document).ready(function () {
   $("input#class-search").change(function() {
-    $("#status").text("searching...");
-    var searchterm = $(this).val();
-    var setTimer = setTimeout(function() {
-      showAll();
-      var results = search(searchterm);
-      $("#status").text("done. ("+results+" results)");
-    }, 1);
+    var term = $(this).val();
+    //$("#status").text(term);
+    var list = $("#list");
+    if (term) {
+      $matches = list.find('a:Contains(' + term + ')').parent();
+      $('li', list).not($matches).css({'display':'none'});
+      $matches.css({'display':'list-item'});
+    } else {
+      list.find("li").css({'display':'list-item'});
+    }
+  });
+  
+  $("a").click(function() {
+    showPage($(this).attr('href'));
+    return false;
   });
 });
 
-function search(searchstring) {
-  var regex = new RegExp(searchstring, "i");
-  var counter = 0;
-  $("#list").find("li").each(function () {
-      if (!$(this).find("a").text().match(regex)) {
-	$(this).css({'display':'none'});
-      } else {
-	counter += 1;
-      }
-  });
-  return counter;
-};
-
-function showAll() {
-  $("#list").find("li").each(function () {
-    $(this).css({'display':'list-item'});
-  });
-};
+function showPage(url) {
+  $("#content").attr('src', url);
+}
